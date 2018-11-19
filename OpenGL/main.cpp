@@ -71,8 +71,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // Our image size.
-const unsigned int SRC_WIDTH = 600;
-const unsigned int SRC_HEIGHT = 400;
+unsigned int SRC_WIDTH;
+unsigned int SRC_HEIGHT;
 
 int WIDTH, HEIGHT;
 
@@ -99,6 +99,12 @@ int main()
     std::string retina;
     
     std::cin >> retina;
+    
+    std::cout << "Type the desired width of the window: " << std::endl;
+    std::cin >> SRC_WIDTH;
+    
+    std::cout << "Type the desired height of the window: " << std::endl;
+    std::cin >> SRC_HEIGHT;
     
     // We initialize glfw and specify which versions of OpenGL to target.
     glfwInit();
