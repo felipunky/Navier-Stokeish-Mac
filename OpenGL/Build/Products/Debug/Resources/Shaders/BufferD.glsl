@@ -1,4 +1,7 @@
 #version 330 core
+
+precision lowp float;
+
 in vec4 vertexColour;
 out vec4 fragColor;
 

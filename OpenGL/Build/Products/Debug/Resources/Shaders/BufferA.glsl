@@ -1,4 +1,7 @@
 #version 330 core
+
+precision lowp float;
+
 out vec4 fragColor;
 
 uniform float iTime;
