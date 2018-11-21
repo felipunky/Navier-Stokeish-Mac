@@ -1,11 +1,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 #include <glm.hpp>
 
 #include "Shader.h"
-//#include "wtypes.h"
 #include <time.h>
 #include <iostream>
 #include <string>
@@ -164,7 +163,8 @@ int main()
     std::string bufferDString = path.string() + "/Resources/Shaders/BufferD.glsl";
     char *bufferD = &bufferDString[0];
     
-    std::cout << bufferAString << std::endl;
+    std::string imagePathString = path.string() + "/Resources/Wind.png";
+    char *imagePath = &imagePathString[0];
     
     // We build and compile our shader program.
     Shader Image( vertexShader, image );
@@ -181,8 +181,8 @@ int main()
         // Positions.            // TextureCoordinates.
         -1.0f,  -1.0f, 0.0f,     //-1.0f,  1.0f,
         -1.0f,   1.0f, 0.0f,     //1.0f,  1.0f,
-        1.0f,   1.0f, 0.0f,     //1.0f, -1.0f,
-        1.0f,  -1.0f, 0.0f,    //-1.0f, -1.0f
+         1.0f,   1.0f, 0.0f,     //1.0f, -1.0f,
+         1.0f,  -1.0f, 0.0f,    //-1.0f, -1.0f
         
     };
     
@@ -224,13 +224,13 @@ int main()
     // Unbind the VAO.
     glBindVertexArray( 0 );
     
-    const int siz = 350;
+    const int siz = 600;
     
     std::vector<glm::vec3> points;
     std::vector<int> ind;
     int counter = 0;
     
-    float dis = 0.009;
+    float dis = 0.003;
     
     for ( int i = -siz; i < siz; ++i )
     {
@@ -274,11 +274,6 @@ int main()
     // Set our vertex attributes pointers.
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( float ), ( void* ) 0 );
     glEnableVertexAttribArray( 0 );
-    /*
-     // Set our texture coordinates attributes.
-     glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), ( void* )( 6 * sizeof( float ) ) );
-     glEnableVertexAttribArray( 2 );
-     */
     
     // Unbind the VBO.
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
@@ -296,6 +291,7 @@ int main()
     BufferB.use();
     BufferB.setInt( "iChannel0", 1 );
     BufferB.setInt( "iChannel1", 0 );
+    BufferB.setInt( "iChannel2", 2 );
     
     BufferC.use();
     BufferC.setInt( "iChannel0", 0 );
@@ -303,13 +299,15 @@ int main()
     
     BufferD.use();
     BufferD.setInt( "iChannel0", 0 );
-    //BufferD.setInt( "iChannel1", 1 );
+    BufferD.setInt( "iChannel1", 1 );
+    BufferD.setInt( "iChannel2", 2 );
     
     Image.use();
     Image.setInt( "iChannel0", 0 );
     Image.setInt( "iChannel1", 1 );
     Image.setInt( "iChannel2", 2 );
     Image.setInt( "iChannel3", 3 );
+    Image.setInt( "iChannel4", 4 );
     
     // BufferA Ping Pong FrameBuffers
     // Framebuffer configuration.
@@ -458,13 +456,35 @@ int main()
     std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
     
+    // Framebuffer configuration.
+    unsigned int frameBufferSeven;
+    glGenFramebuffers( 1, &frameBufferSeven );
+    glBindFramebuffer( GL_FRAMEBUFFER, frameBufferSeven );
+    
+    // Create a colour attachment texture.
+    unsigned int textureColourBufferSeven;
+    glGenTextures( 1, &textureColourBufferSeven );
+    glBindTexture( GL_TEXTURE_2D, textureColourBufferSeven );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColourBufferSeven, 0 );
+    
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    // Add an image.
+    unsigned int tex = loadTexture( imagePath );
+    
     // We want to know if the frame we are rendering is even or odd.
     bool even = true;
     
     // Render Loop.
     while( !glfwWindowShouldClose( window ) )
     {
-        
         
         glfwGetFramebufferSize( window, &WIDTH, &HEIGHT );
         
@@ -563,6 +583,8 @@ int main()
         glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferOne : textureColourBuffer );
         glActiveTexture( GL_TEXTURE1 );
         glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferThree : textureColourBufferTwo );
+        glActiveTexture( GL_TEXTURE2 );
+        glBindTexture( GL_TEXTURE_2D, tex );
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray( 0 );
         
@@ -601,7 +623,7 @@ int main()
         glClear( GL_COLOR_BUFFER_BIT );
         
         // BufferD
-        glBindFramebuffer( GL_FRAMEBUFFER, textureColourBufferSix );
+        glBindFramebuffer( GL_FRAMEBUFFER, even ? textureColourBufferSix : textureColourBufferSeven );
         glClearColor( 0.2f, 0.3f, 0.1f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT );
         
@@ -618,13 +640,17 @@ int main()
         glBindVertexArray( VAOO );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferOne : textureColourBuffer );
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferSeven : textureColourBufferSix );
+        glActiveTexture( GL_TEXTURE2 );
+        glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferThree : textureColourBufferTwo );
         glDrawElements( GL_POINTS, ind.size(), GL_UNSIGNED_INT, 0 );
         glEnable( GL_PROGRAM_POINT_SIZE );
         glBindVertexArray( 0 );
         
         glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         
-        glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+        glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT );
         
         // Our last stage for our colour Navier-Stokes and mixing it with the Wave Equation.
@@ -641,7 +667,9 @@ int main()
         glActiveTexture( GL_TEXTURE2 );
         glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferFive : textureColourBufferFour );
         glActiveTexture( GL_TEXTURE3 );
-        glBindTexture( GL_TEXTURE_2D, textureColourBufferSix );
+        glBindTexture( GL_TEXTURE_2D, even ? textureColourBufferSeven : textureColourBufferSix );
+        glActiveTexture( GL_TEXTURE4 );
+        glBindTexture( GL_TEXTURE_2D, tex );
         glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
         
         glBindVertexArray( 0 );
@@ -742,7 +770,7 @@ static void mouseButtonCallback(GLFWwindow *window, int button, int action, int 
 
 // utility function for loading a 2D texture from file
 // ---------------------------------------------------
-/*
+
 unsigned int loadTexture(char const * path)
 {
     unsigned int textureID;
@@ -780,4 +808,4 @@ unsigned int loadTexture(char const * path)
     
     return textureID;
 }
- */
+ 

@@ -2,6 +2,7 @@ dependencies: /Users/FelipeGutierrez/Desktop/OpenGL/OpenGL/main.cpp \
   /Users/FelipeGutierrez/Downloads/glad-master/Compile/include/glad/glad.h \
   /Users/FelipeGutierrez/Downloads/glad-master/Compile/include/KHR/khrplatform.h \
   /usr/local/include/GLFW/glfw3.h \
+  /Users/FelipeGutierrez/Desktop/OpenGL/OpenGL/stb_image.h \
   /usr/local/Cellar/glm/0.9.9.2/include/glm/glm.hpp \
   /usr/local/Cellar/glm/0.9.9.2/include/glm/detail/_fixes.hpp \
   /usr/local/Cellar/glm/0.9.9.2/include/glm/detail/setup.hpp \

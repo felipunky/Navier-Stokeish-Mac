@@ -1,7 +1,4 @@
 #version 330 core
-
-precision lowp float;
-
 out vec4 fragColor;
 
 uniform int iFrame;
@@ -12,6 +9,7 @@ uniform vec2 iVel;
 uniform vec3 iMouse;
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
+uniform sampler2D iChannel2;
 
 const float dx = 0.5;
 const float dt = dx * dx * 0.5;
@@ -20,15 +18,16 @@ const float di = 0.25;
 const float alp = ( dx * dx ) / dt;
 const float rbe = 1.0 / ( 4.0 + alp );
 const float vo = 12.0;
+
 // We need this for our hash function
 #define HASHSCALE1 .1031
 
 // Dave Hoskin's hash one out two in
-float hash(vec2 p)
+float hash( vec2 p )
 {
-    vec3 p3  = fract(vec3(p.xyx) * HASHSCALE1);
-    p3 += dot(p3, p3.yzx + 19.19);
-    return fract((p3.x + p3.y) * p3.z);
+    vec3 p3  = fract( vec3( p.xyx ) * HASHSCALE1 );
+    p3 += dot( p3, p3.yzx + 19.19 );
+    return fract( ( p3.x + p3.y ) * p3.z );
 }
 
 // Divides the 2D space in tiles than those tiles are asigned a random colour
@@ -153,10 +152,12 @@ vec2 adv( vec2 uv, vec2 p, vec2 mou )
     
 }
 
-vec4 forc( vec2 uv, vec2 p, vec2 mou, sampler2D tex )
+vec4 forc( vec2 uv, vec2 p, vec2 mou )
 {
     
     vec4 col = vec4( 0 );
+    
+    col += 0.001 * texture( iChannel2, uv );
     
     if( iMouse.z > 0.5 && cir( p, mou, siz ) > 0.0 )
         col += 0.1 * vec4( noise( uv + iTime * 0.5 ), noise( uv + 2.0 + iTime * 0.5 ), noise( uv + 1.0 + iTime * 0.5 ), 1 );
@@ -217,7 +218,7 @@ vec4 fin( vec2 uv, vec2 p, vec2 mou )
     
     uv = adv( uv, p, mou );
     uv -= dt * iTimeDelta * ( vel( uv ) * dif( uv ) );
-    col += forc( uv, p, mou, iChannel0 );
+    col += forc( uv, p, mou );
     colO = texture( iChannel0, uv ) + col;
     dam *= 0.99;
     colO *= dam;

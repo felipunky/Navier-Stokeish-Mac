@@ -315,6 +315,7 @@
 		A182D7A221A25E2F0045585B /* libboost_graph.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_graph.a; path = ../../../../usr/local/Cellar/boost/1.67.0_1/lib/libboost_graph.a; sourceTree = "<group>"; };
 		A182D7A321A25E2F0045585B /* libboost_math_tr1-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_math_tr1-mt.dylib"; path = "../../../../usr/local/Cellar/boost/1.67.0_1/lib/libboost_math_tr1-mt.dylib"; sourceTree = "<group>"; };
 		A182D7A421A25E300045585B /* libboost_stacktrace_addr2line-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libboost_stacktrace_addr2line-mt.a"; path = "../../../../usr/local/Cellar/boost/1.67.0_1/lib/libboost_stacktrace_addr2line-mt.a"; sourceTree = "<group>"; };
+		A182D82921A51EEB0045585B /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		A18718D221A1DE5300F7E944 /* glad */ = {isa = PBXFileReference; lastKnownFileType = folder; name = glad; path = "../../Downloads/glfw-3.2.1/deps/glad"; sourceTree = "<group>"; };
 		A18718D421A1E61200F7E944 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = "../../../Downloads/glad-master/Compile/src/glad.c"; sourceTree = "<group>"; };
 		A1E2D139215EA33300E4509A /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
@@ -493,6 +494,7 @@
 				A13D1A15206532AC00E98419 /* main.cpp */,
 				A17E6EB320656AE100E30ABF /* Shader.h */,
 				A18718D421A1E61200F7E944 /* glad.c */,
+				A182D82921A51EEB0045585B /* stb_image.h */,
 			);
 			path = OpenGL;
 			sourceTree = "<group>";
