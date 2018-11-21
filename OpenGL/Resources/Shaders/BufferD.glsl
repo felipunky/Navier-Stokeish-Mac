@@ -16,7 +16,7 @@ void main()
     
     vec4 fin = vertexColour;
     
-    fin += texture( iChannel1, uv ) * 0.99;
+    fin += texture( iChannel1, uv ) * 0.7;
     
     fragColor = fin;
     
