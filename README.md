@@ -5,9 +5,11 @@ This is the Mac application's repository, if you want to go to the Windows versi
 You must have the boost library installed. To do so go to Terminal and type: 
 
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
 After you installed boost, in Terminal type:
 
 brew install boost
+
 Download the .zip file, extract. In the OpenGL/Build/Products/Debug folder there is an executable file: OpenGL, double click and you are in.
 # Description
 The algorithm is mostly done through a ping-pong between shaders using C++ for the CPU and OpenGL's GLSL for the GPU. It is inspired by http://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch38.html
