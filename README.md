@@ -26,3 +26,4 @@ https://github.com/felipunky/GISPython
 
 # Edit
 I implemented a GUI to modify the simulation and the possibility to specify a file path to access different images, in the repository you can find some of the images that I extracted through the python script.
+![simulation](https://user-images.githubusercontent.com/21000020/48935165-abf15f00-eed4-11e8-9718-6bf1e08e0929.JPG)
