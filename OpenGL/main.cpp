@@ -10,6 +10,10 @@
 #include <string>
 #include <vector>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <boost/filesystem.hpp>
 
 #if defined(_WIN32)
@@ -106,6 +110,7 @@ int main()
     std::cin >> SRC_HEIGHT;
     
     // We initialize glfw and specify which versions of OpenGL to target.
+    const char* glsl_version = "#version 150";
     glfwInit();
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
@@ -139,6 +144,20 @@ int main()
         return -1;
         
     }
+    
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+    
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    
+    // Setup Style
+    ImGui::StyleColorsDark();
     
     boost::filesystem::path path = find_executable().parent_path();
     
@@ -482,6 +501,19 @@ int main()
     // We want to know if the frame we are rendering is even or odd.
     bool even = true;
     
+    // Setup input for GUI.
+    ImVec4 leftMouseColour = ImVec4( 0.45f, 0.55f, 0.60f, 1.00f );
+    ImVec4 rightMouseColour = ImVec4( 0.45f, 0.55f, 0.60f, 1.00f );
+    std::string randomOrNot = "Random Colours!";
+    std::string negativeOrNot = "Negative Colours!";
+    static float diffusionRate = 0.25f;
+    static float sizeOfPainter = 0.05f;
+    static float damping = 1.0f;
+    static float vorticity = 12.0f;
+    static int randomColours = 1;
+    static int negativeColours = 1;
+    static int reloadTexture = 0;
+    
     // Render Loop.
     while( !glfwWindowShouldClose( window ) )
     {
@@ -492,6 +524,69 @@ int main()
         
         // Input.
         processInput( window );
+        
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        
+        ImGui::Begin( "Graphical User Interface" );   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Text( "Pick your weapons! You can paint with right and left click" );
+        ImGui::SliderFloat( "Size of Mouse Painter", &sizeOfPainter, 0.0f, 1.0f );  // Edit 1 float using a slider from 0.0f to 1.0f
+        if( ImGui::Button( "Reload Texture" ) )
+            
+            reloadTexture = 1;
+        
+        else
+        {
+            
+            reloadTexture = 0;
+            
+        }
+        ImGui::SliderFloat( "Diffusion Rate", &diffusionRate, 0.0f, 1.0f );
+        ImGui::SliderFloat( "Vorticity Confinement", &vorticity, 1.0f, 20.0f );
+        ImGui::SliderFloat( "Damping factor", &damping, 0.0f, 1.0f );
+        if( ImGui::Button( "Left-Click Random Colours" ) )
+            
+            if( randomColours == 0 )
+            {
+                
+                randomColours = 1;
+                randomOrNot = "Random Colours!";
+                
+            }
+        
+            else
+            {
+                
+                randomColours = 0;
+                randomOrNot = "Not Random Colours";
+                
+            }
+        
+        ImGui::Text( randomOrNot.c_str() );
+        ImGui::ColorEdit3( "Left-Click Colour", ( float* ) &leftMouseColour );
+        if( ImGui::Button( "Right-Click Negative Colours" ) )
+            
+            if( negativeColours == 0 )
+            {
+                
+                negativeColours = 1;
+                negativeOrNot = "Negative Colours!";
+                
+            }
+        
+            else
+            {
+                
+                negativeColours = 0;
+                negativeOrNot = "Not Negative Colours";
+                
+            }
+        
+        ImGui::Text( negativeOrNot.c_str() );
+        ImGui::ColorEdit3( "Right-Click Colour", ( float* ) &rightMouseColour ); // Edit 3 floats representing a color
+        ImGui::End();
         
         // Render.
         
@@ -512,14 +607,26 @@ int main()
         BufferA.setFloat( "iTime", timeValue );
         // Set the iResolution uniform.
         BufferA.setVec2( "iResolution", WIDTH, HEIGHT );
+        // Input the size of the Mouse Painter.
+        BufferA.setFloat( "siz", sizeOfPainter );
+        
+        
         // Input iMouse.
         glfwGetCursorPos( window, &xPos, &yPos );
         
         if( retina == "yes" )
         {
-        
+            
             xPos *= 2.0;
             yPos *= 2.0;
+            
+        }
+        
+        if( ImGui::IsMouseHoveringAnyWindow() == 1 || ImGui::IsAnyItemHovered() == 1 )
+        {
+            
+            pressed = 0;
+            right_pressed = 0;
             
         }
         
@@ -527,6 +634,9 @@ int main()
         
         xDif = xPos - xPre;
         yDif = yPos - yPre;
+        
+        const float dx = 0.5;
+        const float dt = dx * dx * 0.5;
         
         if( xDif != 0 && pressed > 0.5 )
         {
@@ -574,9 +684,26 @@ int main()
         // Set the iResolution uniform.
         BufferB.setVec2( "iResolution", WIDTH, HEIGHT );
         // Input iMouse.
-        BufferB.setVec3( "iMouse", xPos, yPos, pressed );
+        BufferB.setVec4( "iMouse", xPos, yPos, pressed, right_pressed );
         // Input mouse iVel.
         BufferB.setVec2( "iVel", vX, vY );
+        // Input colour from GUI.
+        BufferB.setVec4( "iColour", leftMouseColour.x, leftMouseColour.y, leftMouseColour.z, leftMouseColour.w );
+        BufferB.setVec4( "iColourOne", rightMouseColour.x, rightMouseColour.y, rightMouseColour.z, rightMouseColour.w );
+        // Input the size of the Mouse Painter.
+        BufferB.setFloat( "siz", sizeOfPainter );
+        // Input the damping factor.
+        BufferB.setFloat( "iDamping", damping );
+        // Input the colour flag.
+        BufferB.setInt( "iColourFlag", randomColours );
+        // Input the negative flag.
+        BufferB.setInt( "iNegativeFlag", negativeColours );
+        // Input the diffusion rate float.
+        BufferB.setFloat( "iDiffusion", diffusionRate );
+        // Input the vorticity confinement float.
+        BufferB.setFloat( "iVorticity", vorticity );
+        // Input the reload texture flag.
+        BufferB.setInt( "iReload", reloadTexture );
         
         glBindVertexArray( VAO );
         glActiveTexture( GL_TEXTURE0 );
@@ -676,6 +803,8 @@ int main()
         
         glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers( window );
         glfwPollEvents();
         
@@ -703,6 +832,9 @@ int main()
     }
     
     // De-allocate all resources once they've outlived their purpose.
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glDeleteVertexArrays( 1, &VAO );
     glDeleteVertexArrays( 1, &VAOO );
     glDeleteBuffers( 1, &VBO );

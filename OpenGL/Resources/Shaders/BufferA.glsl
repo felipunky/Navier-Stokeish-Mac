@@ -1,8 +1,10 @@
 #version 330 core
+precision mediump float;
 out vec4 fragColor;
 
 uniform float iTime;
 uniform float iTimeDelta;
+uniform float siz;
 uniform vec2 iResolution;
 uniform vec3 iMouse;
 uniform sampler2D iChannel0;
@@ -11,11 +13,10 @@ uniform sampler2D iChannel1;
 const float dx = 0.5;
 const float dt = dx * dx * 0.5;
 const int ITER = 1;
-const float siz = 0.1;
 const int FIELD = 1;
 const float vf = 0.005;
 const float mul = 20.0;
-const float e = 0.0025;
+const float e = 1e-4;
 
 //2D Vector field visualizer by nmz (twitter: @stormoid)
 
@@ -55,10 +56,10 @@ void main()
     
     float o = 0.0;
     
-    o = texture( iChannel0, uv ).a * 0.99;
+    o = texture( iChannel0, uv ).a * 0.98;
     fO += o;
     
-    if( uv.y < 0.00 || uv.x < 0.00 || uv.x > 1.0 || uv.y > 1.0 ) o *= 0.0;
+    if( p.y < 0.00 || p.x < 0.00 || p.x > mul || p.y > mul ) o *= 0.0;
     
     fragColor = vec4( fld, 0, fO );
     

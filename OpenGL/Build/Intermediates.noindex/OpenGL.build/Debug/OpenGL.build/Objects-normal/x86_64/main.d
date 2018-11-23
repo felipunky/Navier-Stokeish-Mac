@@ -151,6 +151,10 @@ dependencies: /Users/FelipeGutierrez/Desktop/OpenGL/OpenGL/main.cpp \
   /usr/local/Cellar/glm/0.9.9.2/include/glm/detail/func_integer_simd.inl \
   /usr/local/Cellar/glm/0.9.9.2/include/glm/detail/../simd/integer.h \
   /Users/FelipeGutierrez/Desktop/OpenGL/OpenGL/Shader.h \
+  /Users/FelipeGutierrez/Documents/GitHub/imgui/imgui.h \
+  /Users/FelipeGutierrez/Documents/GitHub/imgui/imconfig.h \
+  /Users/FelipeGutierrez/Documents/GitHub/imgui/examples/imgui_impl_glfw.h \
+  /Users/FelipeGutierrez/Documents/GitHub/imgui/examples/imgui_impl_opengl3.h \
   /usr/local/include/boost/filesystem.hpp \
   /usr/local/include/boost/filesystem/config.hpp \
   /usr/local/include/boost/config.hpp \
