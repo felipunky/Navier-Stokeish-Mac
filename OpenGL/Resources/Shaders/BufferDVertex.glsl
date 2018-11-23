@@ -3,7 +3,7 @@ precision mediump float;
 layout( location = 0 ) in vec3 aPos; // the position variable has attribute position 0
 //layout( location = 2 ) in vec2 aTexCoord; // the position variable has attribute position 0
 
-out vec4 vertexColour; // specify a color output to the fragment shader
+//out vec4 vertexColour; // specify a color output to the fragment shader
 
 uniform float iTime;
 uniform vec2 iResolution;
@@ -29,7 +29,7 @@ void main()
     
     //pos += texture( iChannel1, uv ).zw;
     
-    vertexColour = texture( iChannel2, uv );
+    //vertexColour = texture( iChannel2, uv );
     
     gl_Position = vec4( pos, 0, 1 );
     
