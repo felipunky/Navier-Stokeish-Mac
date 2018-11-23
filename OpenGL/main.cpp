@@ -109,6 +109,14 @@ int main()
     std::cout << "Type the desired height of the window: " << std::endl;
     std::cin >> SRC_HEIGHT;
     
+    std::cout << "Specify the path to the texture you want to use to initialize the simulation (no double quotes please!): " << std::endl;
+    
+    std::string texturePathString = "Wind.png";
+    
+    std::cin >> texturePathString;
+    
+    const char* texturePath = &texturePathString[0];
+    
     // We initialize glfw and specify which versions of OpenGL to target.
     const char* glsl_version = "#version 150";
     glfwInit();
@@ -496,7 +504,7 @@ int main()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
     // Add an image.
-    unsigned int tex = loadTexture( imagePath );
+    unsigned int tex = loadTexture( texturePath );
     
     // We want to know if the frame we are rendering is even or odd.
     bool even = true;
