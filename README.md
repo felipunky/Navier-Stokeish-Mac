@@ -16,7 +16,7 @@ The algorithm is mostly done through a ping-pong between shaders using C++ for t
 
 http://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch38.html
 
-I added a python script that relies heavily on gdal and matplot lib, to install the dependencies to be able to run:
+I added a python script to initialize the simulation through a .png, it relies heavily on gdal and matplot lib, to install the dependencies to be able to run:
 
 https://github.com/felipunky/Navier-Stokeish-Mac/blob/master/ImageFromGrib.py
 
