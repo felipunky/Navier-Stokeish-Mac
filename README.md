@@ -23,3 +23,6 @@ https://github.com/felipunky/Navier-Stokeish-Mac/blob/master/ImageFromGrib.py
 Go to:
 
 https://github.com/felipunky/GISPython
+
+# Edit
+I implemented a GUI to modify the simulation and the possibility to specify a file path to access different images, in the repository you can find some of the images that I extracted through the python script.
